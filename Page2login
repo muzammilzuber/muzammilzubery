@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login Page - Stylish</title>
+  <style>
+    /* Background gradient with animation */
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(270deg, #ff6a00, #ee0979, #00c6ff, #0072ff);
+      background-size: 800% 800%;
+      animation: gradientBG 15s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    /* Container with glassmorphism effect */
+    .login-container {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 40px 30px;
+      width: 350px;
+      color: #fff;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 30px;
+      font-weight: 700;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #e0e0e0;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 1rem;
+      box-shadow: inset 2px 2px 5px rgba(255,255,255,0.3),
+                  inset -2px -2px 5px rgba(0,0,0,0.2);
+      transition: background 0.3s ease;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      background: rgba(255, 255, 255, 0.4);
+      outline: none;
+      box-shadow: 0 0 8px 2px #ff6a00;
+      color: #000;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(45deg, #ff6a00, #ee0979);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 106, 0, 0.6);
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #ee0979, #ff6a00);
+      box-shadow: 0 6px 20px rgba(238, 9, 121, 0.8);
+    }
+
+    .error {
+      color: #ff4d4d;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      display: none;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    <form id="loginForm" novalidate>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Enter your email" required />
+      <div class="error" id="emailError">Please enter a valid email address.</div>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required minlength="6" />
+      <div class="error" id="passwordError">Password must be at least 6 characters.</div>
+
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+
+    loginForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      // Reset error messages
+      emailError.style.display = 'none';
+      passwordError.style.display = 'none';
+
+      let valid = true;
+
+      // Validate email
+      const emailValue = emailInput.value.trim();
+      if (!validateEmail(emailValue)) {
+        emailError.style.display = 'block';
+        valid = false;
+      }
+
+      // Validate password
+      const passwordValue = passwordInput.value.trim();
+      if (passwordValue.length < 6) {
+        passwordError.style.display = 'block';
+        valid = false;
+      }
+
+      if (valid) {
+        alert('Login successful with email: ' + emailValue);
+        // TODO: Replace alert with backend login logic
+      }
+    });
+
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+  </script>
+</body>
+</html>
