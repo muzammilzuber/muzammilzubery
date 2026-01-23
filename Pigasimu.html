@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Wasiliana Nasi — WhatsApp / Simu</title>
+
+  <!-- Google Fonts (distinct display + readable body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400,600,700&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg0:#07070b;
+      --bg1:#0c0d14;
+      --card:#0f1220cc;
+      --stroke:rgba(255,255,255,.12);
+      --stroke2:rgba(255,255,255,.18);
+      --text:#f3f4ff;
+      --muted:rgba(243,244,255,.72);
+
+      /* brand accents */
+      --lime:#2cff9a;
+      --aqua:#33d6ff;
+      --rose:#ff4fd8;
+      --gold:#ffd36a;
+
+      --shadow: 0 24px 80px rgba(0,0,0,.55);
+      --shadow2: 0 18px 50px rgba(0,0,0,.38);
+      --radius: 22px;
+      --radius2: 16px;
+
+      --max: 1180px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1100px 700px at 15% 18%, rgba(51,214,255,.16), transparent 55%),
+        radial-gradient(900px 600px at 78% 12%, rgba(255,79,216,.14), transparent 58%),
+        radial-gradient(900px 900px at 55% 80%, rgba(44,255,154,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    /* subtle grain */
+    body:before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.08;
+      mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+      background-size:180px 180px;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    .wrap{
+      width:min(var(--max), calc(100% - 32px));
+      margin:0 auto;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: linear-gradient(180deg, rgba(7,7,11,.78), rgba(7,7,11,.35));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 0;
+      gap:14px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 180px;
+    }
+    .mark{
+      width:42px; height:42px;
+      border-radius:14px;
+      background:
+        radial-gradient(10px 10px at 25% 30%, rgba(255,255,255,.55), transparent 55%),
+        conic-gradient(from 220deg, var(--lime), var(--aqua), var(--rose), var(--gold), var(--lime));
+      box-shadow: 0 10px 28px rgba(0,0,0,.5);
+      border:1px solid rgba(255,255,255,.18);
+    }
+    .brand b{
+      font-family:"Fraunces", serif;
+      letter-spacing:.3px;
+      font-weight:700;
+      font-size: 16px;
+      line-height: 1.05;
+      display:block;
+    }
+    .brand span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-top:2px;
+    }
+
+    .nav-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(15,18,32,.35);
+      color: rgba(243,244,255,.88);
+      box-shadow: 0 8px 22px rgba(0,0,0,.22);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.2);
+      background: rgba(15,18,32,.52);
+    }
+    .chip:active{ transform: translateY(0px) scale(.99); }
+    .chip svg{ width:16px; height:16px; opacity:.92; }
+
+    main{ padding: 26px 0 70px; }
+
+    .hero{
+      position:relative;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+      align-items:stretch;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 920px){
+      .hero{ grid-template-columns: 1fr; }
+      .brand{ min-width:auto; }
+    }
+
+    .panel{
+      position:relative;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(15,18,32,.66), rgba(10,12,20,.48));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .panel:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(900px 280px at 10% 0%, rgba(51,214,255,.18), transparent 60%),
+        radial-gradient(700px 240px at 70% 10%, rgba(255,79,216,.14), transparent 62%),
+        radial-gradient(700px 260px at 35% 100%, rgba(44,255,154,.12), transparent 62%);
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    .panel > *{ position:relative; z-index:1; }
+
+    .hero-left{
+      padding: clamp(18px, 3vw, 30px);
+      min-height: 420px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap: 18px;
+    }
+
+    .kicker{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      width:fit-content;
+      background: rgba(0,0,0,.18);
+      color: rgba(243,244,255,.86);
+      letter-spacing:.22px;
+      font-size: 12.5px;
+    }
+    .dot{
+      width:9px;height:9px;border-radius:99px;
+      background: var(--lime);
+      box-shadow: 0 0 0 5px rgba(44,255,154,.12);
+    }
+
+    h1{
+      font-family:"Fraunces", serif;
+      font-weight:700;
+      line-height:1.02;
+      letter-spacing:-.6px;
+      font-size: clamp(30px, 4.4vw, 56px);
+      margin: 8px 0 10px;
+    }
+    .sub{
+      color: var(--muted);
+      font-size: clamp(14.5px, 1.55vw, 17px);
+      line-height:1.65;
+      max-width: 60ch;
+    }
+
+    .cta-row{
+      display:flex;
+      gap: 12px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top: 14px;
+    }
+
+    .btn{
+      appearance:none;
+      border:0;
+      cursor:pointer;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-weight: 700;
+      letter-spacing:.2px;
+      color: rgba(7,7,11,.95);
+      background:
+        radial-gradient(16px 16px at 20% 20%, rgba(255,255,255,.55), transparent 60%),
+        linear-gradient(135deg, var(--lime), var(--aqua));
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+      transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .btn:hover{
+      transform: translateY(-2px);
+      filter: saturate(1.06) contrast(1.02);
+      box-shadow: 0 22px 60px rgba(0,0,0,.45);
+    }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btn svg{ width:18px;height:18px; }
+
+    .btn-secondary{
+      color: rgba(243,244,255,.92);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: var(--shadow2);
+    }
+    .btn-secondary:hover{
+      background: rgba(255,255,255,.085);
+      border-color: rgba(255,255,255,.22);
+    }
+
+    .helper{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    @media (max-width: 560px){
+      .helper{ grid-template-columns: 1fr; }
+    }
+
+    .mini{
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      padding: 12px 12px;
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .mini:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.2);
+      background: rgba(0,0,0,.22);
+    }
+    .mini .ic{
+      width:36px; height:36px;
+      border-radius: 12px;
+      display:grid;
+      place-items:center;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.12);
+      flex:0 0 auto;
+    }
+    .mini .ic svg{ width:18px;height:18px; opacity:.9; }
+    .mini p{
+      margin:0;
+      color: rgba(243,244,255,.82);
+      font-size: 13px;
+      line-height:1.5;
+    }
+    .mini b{ color: rgba(243,244,255,.94); }
+
+    /* Right side: contact card */
+    .hero-right{
+      padding: clamp(16px, 2.7vw, 24px);
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+      min-height: 420px;
+    }
+
+    .card{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      padding: 16px;
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+      position:relative;
+    }
+    .card:after{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background:
+        radial-gradient(600px 220px at 10% 20%, rgba(44,255,154,.18), transparent 55%),
+        radial-gradient(620px 260px at 90% 0%, rgba(255,211,106,.16), transparent 60%);
+      pointer-events:none;
+      opacity:.75;
+      z-index:0;
+    }
+    .card > *{ position:relative; z-index:1; }
+
+    .card h2{
+      font-family:"Fraunces", serif;
+      margin: 0 0 8px;
+      font-size: 22px;
+      letter-spacing:-.2px;
+    }
+    .muted{ color: var(--muted); }
+
+    form{
+      display:grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    label{
+      font-size: 12px;
+      color: rgba(243,244,255,.74);
+      letter-spacing:.2px;
+    }
+
+    input, textarea, select{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(15,18,32,.42);
+      color: rgba(243,244,255,.92);
+      outline: none;
+      transition: border-color .15s ease, background .15s ease, transform .15s ease;
+    }
+    input:focus, textarea:focus, select:focus{
+      border-color: rgba(51,214,255,.35);
+      background: rgba(15,18,32,.56);
+    }
+    textarea{ min-height: 92px; resize: vertical; }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 520px){
+      .row{ grid-template-columns: 1fr; }
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      margin-top: 6px;
+    }
+
+    .tiny{
+      font-size: 12px;
+      color: rgba(243,244,255,.7);
+      line-height:1.45;
+      margin: 10px 0 0;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+      cursor:pointer;
+      user-select:none;
+    }
+    .pill:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.085);
+      border-color: rgba(255,255,255,.2);
+    }
+    .pill:active{ transform: translateY(0px) scale(.99); }
+    .pill svg{ width:16px;height:16px; }
+
+    footer{
+      padding: 20px 0 34px;
+      color: rgba(243,244,255,.62);
+      font-size: 12.5px;
+    }
+    .foot{
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 16px;
+    }
+
+    /* reveal animation */
+    .reveal{
+      opacity:0;
+      transform: translateY(14px);
+      animation: rise .7s ease forwards;
+    }
+    .d1{ animation-delay:.05s; }
+    .d2{ animation-delay:.14s; }
+    .d3{ animation-delay:.23s; }
+    .d4{ animation-delay:.32s; }
+    .d5{ animation-delay:.41s; }
+
+    @keyframes rise{
+      to{ opacity:1; transform: translateY(0); }
+    }
+
+    /* toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(10,12,20,.72);
+      border:1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: rgba(243,244,255,.9);
+      border-radius: 999px;
+      padding: 10px 12px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.55);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+      max-width: min(92vw, 560px);
+      z-index: 80;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(-6px);
+      pointer-events:auto;
+    }
+    .toast code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,.86);
+      background: rgba(255,255,255,.08);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.1);
+      white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap">
+      <div class="nav">
+        <a class="brand" href="#" aria-label="Rudi juu">
+          <div class="mark" aria-hidden="true"></div>
+          <div>
+            <b>Uagizaji wa Chakula</b>
+            <span>Wasiliana haraka kupitia WhatsApp au Simu</span>
+          </div>
+        </a>
+
+        <div class="nav-actions" aria-label="Vitufe vya haraka">
+          <button class="chip" id="copyNumberBtn" type="button" title="Nakili namba">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M9 9h10v10H9V9Z" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M5 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            Nakili Namba
+          </button>
+
+          <a class="chip" id="callQuick" href="tel:+255700000000" title="Piga simu moja kwa moja">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M8.5 10.5c1.6 3.2 3.8 5.4 7 7l2.2-2.2c.3-.3.8-.4 1.2-.2 1 .4 2 .6 3.1.7.5 0 .9.4.9.9V20c0 .6-.5 1-1.1 1C10.2 21 3 13.8 3 5.2 3 4.6 3.4 4 4 4h3.1c.5 0 .9.4.9.9.1 1.1.3 2.1.7 3.1.1.4 0 .9-.3 1.2L8.5 10.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            </svg>
+            Piga Simu
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" aria-label="Ukurasa wa kuhamia WhatsApp">
+      <div class="panel hero-left reveal d1">
+        <div class="hero-left">
+          <div>
+            <div class="kicker reveal d2">
+              <span class="dot" aria-hidden="true"></span>
+              Ukimaliza kuagiza, chagua njia ya mawasiliano
+            </div>
+
+            <h1 class="reveal d3">Tumalizie oda yako kupitia WhatsApp — haraka na wazi.</h1>
+            <p class="sub reveal d4">
+              Ukurasa huu unakupeleka moja kwa moja kwenye WhatsApp yako ili uthibitishe oda, uulize maswali,
+              au upige simu. Andika jina na maelezo ya oda ili ujumbe uandaliwe kiotomatiki.
+            </p>
+
+            <div class="cta-row reveal d5">
+              <button class="btn" id="openWhatsAppBtn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M20.5 11.8c0 4.8-3.9 8.7-8.7 8.7-1.5 0-2.9-.4-4.2-1l-3.1.9 1-3c-.7-1.4-1.1-3-1.1-4.6C4.4 7.1 8.3 3.2 13.1 3.2c4.8 0 8.7 3.9 8.7 8.6Z" stroke="currentColor" stroke-width="1.6" opacity=".9"/>
+                  <path d="M10 9.3c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.7c.1.3.1.5-.1.7l-.4.5c-.1.1-.2.3-.1.5.4.8 1.4 1.7 2.3 2.1.2.1.4 0 .5-.1l.6-.4c.2-.2.4-.2.7-.1l1.6.6c.3.1.4.3.4.5 0 .6-.3 1.2-.8 1.6-.5.4-1.2.6-1.8.5-1.2-.2-2.5-.8-3.6-1.8-1.2-1-2.1-2.3-2.4-3.6-.2-.7 0-1.4.4-1.9Z" fill="currentColor" opacity=".92"/>
+                </svg>
+                Fungua WhatsApp
+              </button>
+
+              <button class="btn btn-secondary" id="openCallBtn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M8.5 10.5c1.6 3.2 3.8 5.4 7 7l2.2-2.2c.3-.3.8-.4 1.2-.2 1 .4 2 .6 3.1.7.5 0 .9.4.9.9V20c0 .6-.5 1-1.1 1C10.2 21 3 13.8 3 5.2 3 4.6 3.4 4 4 4h3.1c.5 0 .9.4.9.9.1 1.1.3 2.1.7 3.1.1.4 0 .9-.3 1.2L8.5 10.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                </svg>
+                Piga Simu Sasa
+              </button>
+            </div>
+          </div>
+
+          <div class="helper" aria-label="Vidokezo">
+            <div class="mini">
+              <div class="ic" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <p><b>Ujumbe tayari.</b><br>Utafungua WhatsApp ukiwa na maandishi ya oda tayari.</p>
+            </div>
+            <div class="mini">
+              <div class="ic" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 21s-7-4.4-7-11a7 7 0 0 1 14 0c0 6.6-7 11-7 11Z" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M12 10.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" fill="currentColor" opacity=".85"/>
+                </svg>
+              </div>
+              <p><b>Uwasilishaji.</b><br>Weka eneo/maelekezo ili kurahisisha delivery.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="panel hero-right reveal d2" aria-label="Fomu ya maelezo ya oda">
+        <div class="card">
+          <h2>Andaa ujumbe wa WhatsApp</h2>
+          <p class="muted" style="margin:0;">
+            Badilisha namba ya WhatsApp na simu ndani ya code (maelekezo chini).
+          </p>
+
+          <form id="orderForm">
+            <div class="row">
+              <div>
+                <label for="custName">Jina</label>
+                <input id="custName" name="custName" type="text" placeholder="Mf: Asha" autocomplete="name" />
+              </div>
+              <div>
+                <label for="area">Eneo</label>
+                <input id="area" name="area" type="text" placeholder="Mf: Kariakoo" autocomplete="address-level2" />
+              </div>
+            </div>
+
+            <div>
+              <label for="orderItems">Oda (vitu unavyoagiza)</label>
+              <textarea id="orderItems" name="orderItems" placeholder="Mf: Chips kuku x1, Juice x2"></textarea>
+            </div>
+
+            <div class="row">
+              <div>
+                <label for="deliveryType">Aina ya huduma</label>
+                <select id="deliveryType" name="deliveryType">
+                  <option value="Delivery">Delivery</option>
+                  <option value="Pick-up">Pick-up</option>
+                  <option value="Dine-in">Kula hapo</option>
+                </select>
+              </div>
+              <div>
+                <label for="notes">Maelezo (hiari)</label>
+                <input id="notes" name="notes" type="text" placeholder="Mf: Usipige hodi, nipigie simu" />
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn" type="submit" id="sendWhatsAppFromForm">
+                Tuma WhatsApp
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 12h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M14 6l6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+
+              <button class="pill" type="button" id="previewBtn" title="Onyesha ujumbe utakavyokuwa">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M2.5 12s3.5-7 9.5-7 9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7Z" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" fill="currentColor" opacity=".86"/>
+                </svg>
+                Preview
+              </button>
+
+              <button class="pill" type="button" id="resetBtn">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M20 12a8 8 0 1 1-2.3-5.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M20 4v6h-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Futa
+              </button>
+            </div>
+
+            <p class="tiny">
+              Kumbuka: WhatsApp itafunguka kwenye app (mobile) au WhatsApp Web (desktop). Kwa “kupiga simu”
+              tumia kitufe cha <b>Piga Simu</b> au baada ya kufungua WhatsApp, bonyeza ikoni ya simu ndani ya WhatsApp.
+            </p>
+          </form>
+        </div>
+
+        <div class="card" style="padding:14px 16px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+            <div>
+              <div class="muted" style="font-size:12px; letter-spacing:.2px;">Namba ya WhatsApp</div>
+              <div style="font-weight:800; letter-spacing:.2px;" id="shownNumber">+255 789352975</div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="pill" id="whatsAppWeb" href="#" rel="noopener" title="Fungua WhatsApp Web">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7A2.5 2.5 0 0 1 17.5 16h-11A2.5 2.5 0 0 1 4 13.5v-7Z" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M8 20h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+                WhatsApp Web
+              </a>
+              <a class="pill" id="directChat" href="#" rel="noopener" title="Chat bila maandishi">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M20.5 11.8c0 4.8-3.9 8.7-8.7 8.7-1.5 0-2.9-.4-4.2-1l-3.1.9 1-3c-.7-1.4-1.1-3-1.1-4.6C4.4 7.1 8.3 3.2 13.1 3.2c4.8 0 8.7 3.9 8.7 8.6Z" stroke="currentColor" stroke-width="1.6"/>
+                </svg>
+                Chat Direct
+              </a>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <footer>
+      <div class="foot">
+        <div>© <span id="year"></span> Ukurasa wa Mawasiliano</div>
+        <div class="muted">Tip: badilisha namba kwenye JS: <code>WHATSAPP_NUMBER_E164</code> & <code>CALL_NUMBER_E164</code></div>
+      </div>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span id="toastText">Imefanikiwa.</span>
+    <code id="toastCode" style="display:none;"></code>
+  </div>
+
+  <script>
+    // =========================
+    // 1) WEKA NAMBA ZAKO HAPA
+    // =========================
+    // WhatsApp: weka katika E.164 bila alama + ndani ya URL (mf: 2557XXXXXXXX)
+    const WHATSAPP_NUMBER_E164 = "255789352975"; // <-- BADILISHA
+    // Simu: weka na + (mf: +2557XXXXXXXX)
+    const CALL_NUMBER_E164 = "+255789352975";   // <-- BADILISHA
+
+    // Optional: jina la biashara
+    const BUSINESS_NAME = "Uagizaji wa Chakula";
+
+    // Elements
+    const yearEl = document.getElementById("year");
+    yearEl.textContent = new Date().getFullYear();
+
+    const shownNumber = document.getElementById("shownNumber");
+    shownNumber.textContent = CALL_NUMBER_E164.replace("+", "+").replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "$1 $2 $3 $4");
+
+    const callQuick = document.getElementById("callQuick");
+    callQuick.href = "tel:" + CALL_NUMBER_E164;
+
+    const openCallBtn = document.getElementById("openCallBtn");
+    openCallBtn.addEventListener("click", () => {
+      window.location.href = "tel:" + CALL_NUMBER_E164;
+    });
+
+    // Toast helper
+    const toast = document.getElementById("toast");
+    const toastText = document.getElementById("toastText");
+    const toastCode = document.getElementById("toastCode");
+    let toastTimer;
+
+    function showToast(message, codeText){
+      toastText.textContent = message;
+      if(codeText){
+        toastCode.style.display = "inline-flex";
+        toastCode.textContent = codeText;
+      }else{
+        toastCode.style.display = "none";
+        toastCode.textContent = "";
+      }
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+    }
+
+    // Build WhatsApp message
+    function buildMessage(){
+      const name = (document.getElementById("custName").value || "").trim();
+      const area = (document.getElementById("area").value || "").trim();
+      const items = (document.getElementById("orderItems").value || "").trim();
+      const deliveryType = document.getElementById("deliveryType").value;
+      const notes = (document.getElementById("notes").value || "").trim();
+
+      const lines = [];
+      lines.push(`Habari ${BUSINESS_NAME}!`);
+      if(name) lines.push(`Jina: ${name}`);
+      lines.push(`Huduma: ${deliveryType}`);
+      if(area) lines.push(`Eneo: ${area}`);
+      if(items) lines.push(`Oda: ${items}`);
+      if(notes) lines.push(`Maelezo: ${notes}`);
+      lines.push(`Asante.`);
+
+      return lines.join("\n");
+    }
+
+    function openWhatsAppWithText(text){
+      const encoded = encodeURIComponent(text);
+      // wa.me works on mobile + desktop (redirects to app/web)
+      const url = `https://wa.me/${WHATSAPP_NUMBER_E164}?text=${encoded}`;
+      window.open(url, "_blank", "noopener");
+    }
+
+    // Quick WhatsApp button (uses current form message)
+    const openWhatsAppBtn = document.getElementById("openWhatsAppBtn");
+    openWhatsAppBtn.addEventListener("click", () => {
+      const msg = buildMessage();
+      openWhatsAppWithText(msg);
+    });
+
+    // Form submit -> send WhatsApp
+    const form = document.getElementById("orderForm");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const msg = buildMessage();
+
+      // basic validation: require items or name at least
+      const items = (document.getElementById("orderItems").value || "").trim();
+      if(!items){
+        showToast("Tafadhali andika oda yako kwenye sehemu ya 'Oda'.");
+        document.getElementById("orderItems").focus();
+        return;
+      }
+      openWhatsAppWithText(msg);
+    });
+
+    // Preview
+    const previewBtn = document.getElementById("previewBtn");
+    previewBtn.addEventListener("click", async () => {
+      const msg = buildMessage();
+      try{
+        await navigator.clipboard.writeText(msg);
+        showToast("Preview imenakiliwa. Bandika WhatsApp ukitaka.", "CTRL/⌘ + V");
+      }catch(err){
+        // fallback: show toast without clipboard
+        showToast("Huu ndio ujumbe (haujanakiliwa):");
+        alert(msg);
+      }
+    });
+
+    // Reset
+    const resetBtn = document.getElementById("resetBtn");
+    resetBtn.addEventListener("click", () => {
+      form.reset();
+      showToast("Umefuta taarifa za fomu.");
+    });
+
+    // Copy number
+    const copyNumberBtn = document.getElementById("copyNumberBtn");
+    copyNumberBtn.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(CALL_NUMBER_E164);
+        showToast("Namba imenakiliwa.", CALL_NUMBER_E164);
+      }catch(e){
+        showToast("Imeshindikana kunakili. Nakili kwa mkono:", CALL_NUMBER_E164);
+      }
+    });
+
+    // WhatsApp Web & Direct chat links
+    const whatsAppWeb = document.getElementById("whatsAppWeb");
+    const directChat = document.getElementById("directChat");
+
+    whatsAppWeb.href = `https://web.whatsapp.com/send?phone=${WHATSAPP_NUMBER_E164}`;
+    directChat.href  = `https://wa.me/${WHATSAPP_NUMBER_E164}`;
+
+    // Scroll-triggered reveal (for extra polish)
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.style.animationPlayState = "running";
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach((el) => {
+      el.style.animationPlayState = "paused";
+      io.observe(el);
+    });
+  </script>
+       <div class="contact-section" role="contentinfo" aria-label="Muzz Restaurant contact information">
+  <div class="contact-container">
+    <div class="contact-logo" aria-hidden="true">
+      <!-- Custom restaurant logo: plate with fork and spoon -->
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <circle cx="32" cy="32" r="26" fill="rgba(255,255,255,0.08)"/>
+        <ellipse cx="32" cy="34" rx="20" ry="8" fill="#f7931e" opacity="0.3"/>
+        <rect x="18.5" y="16" width="2.6" height="24" rx="1" fill="#f7931e"/>
+        <rect x="17" y="16" width="5" height="3" rx="1" fill="#f7931e"/>
+        <path d="M45 15c1.8 0 3.3 1.5 3.3 3.3 0 2.8-2.2 5.6-6.5 8.8-3 2.2-5 3.3-6 3.3s-2.9-1.2-4.6-3.3c-2.3-2.9-2-6 .7-8.8 2.1-2.4 5.4-3.3 8.1-3.3" fill="#f7931e"/>
+      </svg>
+      <h2>Muzz Restaurant</h2>
+      <small>Hotel</small>
+    </div>
+
+    <div class="contact-details">
+      <h3>CONTACT DETAILS</h3>
+      <p>Muzz Restaurant</p>
+      <p>Sinza, Dar es Salaam, Tanzania</p>
+      <p>T: <a href="tel:+255789352975">+255 789 352 975</a></p>
+      <p>E: <a href="mailto:muzFestaurant%26fooddelivery@gmail.com">muzFestaurant&amp;fooddelivery@gmail.com</a></p>
+    </div>
+
+    <div class="links-column" aria-label="Links">
+      <h3>SERVICES</h3>
+      <ul>
+        <li><a href="Vyakula.html">Order Food</a></li>
+        <li><a href="Pigasimu.html">Delivery Info</a></li>
+        <li><a href="#">Menu</a></li>
+        <li><a href="#">Contact Us</a></li>
+      </ul>
+    </div>
+
+    <div class="newsletter-column" aria-label="Newsletter subscription and social media">
+      <h3>SUBSCRIBE TO OUR NEWSLETTER</h3>
+      <form class="newsletter-form" action="#" method="post" aria-label="Subscribe to newsletter">
+        <input type="email" name="email" placeholder="Email Address" aria-label="Email Address" required />
+        <button type="submit" aria-label="Subscribe"><span aria-hidden="true">→</span></button>
+      </form>
+      <div class="social-icons" aria-label="Follow us on social media">
+        <a href="#" aria-label="YouTube"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184a2.997 2.997 0 0 0-2.11-2.11C15.5.5 12 0.5 12 0.5s-3.5 0-5.505.574a2.997 2.997 0 0 0-2.11 2.11A31.6 31.6 0 0 0 4 8c0 1.5.1 3 .1 3s0 1.5.005 3a31.6 31.6 0 0 0 .385 4.816 2.997 2.997 0 0 0 2.11 2.11C8.5 23.5 12 23.5 12 23.5s3.5 0 5.505-.574a2.997 2.997 0 0 0 2.11-2.11A31.6 31.6 0 0 0 20 16c0-1.5-.1-3-.1-3s0-1.5-.005-3a31.6 31.6 0 0 0-.28-3.816zM10 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.6 0 0 .6 0 1.325v21.351C0 23.4.6 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.894-4.788 4.659-4.788 1.325 0 2.464.099 2.795.143v3.24l-1.918.001c-1.504 0-1.796.715-1.796 1.763v2.31h3.59l-.467 3.622h-3.123V24h6.116C23.4 24 24 23.4 24 22.675V1.325C24 .6 23.4 0 22.675 0z"/></svg></a>
+        <a href="#" aria-label="Twitter"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557a9.83 9.83 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724 9.865 9.865 0 0 1-3.127 1.195 4.916 4.916 0 0 0-8.38 4.482A13.94 13.94 0 0 1 1.671 3.149a4.916 4.916 0 0 0 1.523 6.574 4.897 4.897 0 0 1-2.228-.616c-.054 2.281 1.581 4.415 3.949 4.89a4.935 4.935 0 0 1-2.224.084 4.918 4.918 0 0 0 4.59 3.417A9.867 9.867 0 0 1 0 19.54a13.94 13.94 0 0 0 7.548 2.209c9.056 0 14.01-7.513 14.01-14.01 0-.213-.005-.425-.014-.636A10.012 10.012 0 0 0 24 4.557z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 2A3.75 3.75 0 0 0 4 7.75v8.5A3.75 3.75 0 0 0 7.75 20h8.5a3.75 3.75 0 0 0 3.75-3.75v-8.5A3.75 3.75 0 0 0 16.25 4h-8.5zm8.75 1.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm-4.25 2a4.75 4.75 0 1 1 0 9.5 4.75 4.75 0 0 1 0-9.5zm0 2a2.75 2.75 0 1 0 0 5.5 2.75 2.75 0 0 0 0-5.5z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

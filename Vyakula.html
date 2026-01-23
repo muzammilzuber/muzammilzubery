@@ -1,0 +1,500 @@
+
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oda Chakula Online - Vyakula Vingine</title>
+  <style>
+    /* Background gradient white to red with multi colors */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #fff0f0, #ffcccc, #ff6666, #cc0000);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      color: #3a1a1a;
+    }
+
+    h1 {
+      margin-bottom: 24px;
+      font-weight: 700;
+      color: #800000;
+      text-shadow: 1px 1px 3px #fff;
+    }
+
+    .food-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      width: 100%;
+      max-width: 1100px;
+      margin-bottom: 32px;
+    }
+
+    .food-item {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(204, 0, 0, 0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .food-item:hover {
+      transform: translateY(-6px);
+      border-color: #cc0000;
+      box-shadow: 0 10px 25px rgba(204, 0, 0, 0.5);
+    }
+
+    .food-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-bottom: 3px solid #cc0000;
+    }
+
+    .food-info {
+      padding: 16px 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .food-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #b30000;
+      margin-bottom: 8px;
+      text-transform: capitalize;
+      text-shadow: 1px 1px 2px #fff;
+    }
+
+    .food-price {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #800000;
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Checkbox style */
+    .food-select {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: #660000;
+      user-select: none;
+    }
+    .food-select input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+      accent-color: #cc0000;
+    }
+
+    /* Submit button */
+    .submit-btn {
+      background: #cc0000;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 28px;
+      padding: 14px 36px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(204, 0, 0, 0.6);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      align-self: center;
+      user-select: none;
+    }
+    .submit-btn:hover {
+      background: #ff0000;
+      box-shadow: 0 8px 22px rgba(255, 0, 0, 0.8);
+    }
+
+    /* Order summary modal */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+    .modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 16px;
+      max-width: 480px;
+      width: 90%;
+      padding: 24px 32px;
+      box-shadow: 0 8px 30px rgba(204, 0, 0, 0.7);
+      color: #3a1a1a;
+      text-align: center;
+      position: relative;
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: #cc0000;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .modal-content ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px 0;
+      max-height: 240px;
+      overflow-y: auto;
+      text-align: left;
+    }
+    .modal-content ul li {
+      margin-bottom: 10px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 6px;
+    }
+    .modal-content .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .modal-content button {
+      padding: 10px 24px;
+      border-radius: 28px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .btn-confirm {
+      background: #cc0000;
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(204, 0, 0, 0.6);
+    }
+    .btn-confirm:hover {
+      background: #ff0000;
+      box-shadow: 0 8px 22px rgba(255, 0, 0, 0.8);
+    }
+    .btn-cancel {
+      background: #ddd;
+      color: #333;
+    }
+    .btn-cancel:hover {
+      background: #bbb;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .food-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Oda Chakula Online - Vyakula Vingine</h1>
+
+  <form id="foodOrderForm" aria-label="Oda chakula online">
+    <div class="food-list" role="list" aria-live="polite" aria-relevant="additions removals">
+      <!-- Existing 10 items -->
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/6897730/pexels-photo-6897730.jpeg" alt="Shawarma" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Shawarma</div>
+          <div class="food-price">Tsh 4,500</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Shawarma" data-price="4500" />
+            Chagua Shawarma
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg" alt="Chipsi" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Chipsi</div>
+          <div class="food-price">Tsh 3,000</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Chipsi" data-price="3000" />
+            Chagua Chipsi
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/4109111/pexels-photo-4109111.jpeg" alt="Pizza" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Pizza</div>
+          <div class="food-price">Tsh 2,500</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Pizza" data-price="2500" />
+            Chagua Pizza
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/5866825/pexels-photo-5866825.jpeg" alt="Mishkaki" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Mishkaki</div>
+          <div class="food-price">Tsh 5,000</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Mishkaki" data-price="5000" />
+            Chagua Mishkaki
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/60616/fried-chicken-chicken-fried-crunchy-60616.jpeg" alt="Kuku" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Kuku</div>
+          <div class="food-price">Tsh 2,500</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Kuku" data-price="2500" />
+            Chagua Kuku
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/2983098/pexels-photo-2983098.jpeg" alt="Burger" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Burger</div>
+          <div class="food-price">Tsh 4,000</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Burger" data-price="4000" />
+            Chagua Burger
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/8000025/pexels-photo-8000025.jpeg" alt="Chapati Rosti" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Chapati Rosti</div>
+          <div class="food-price">Tsh 5,000</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Chapati Rosti" data-price="5000" />
+            Chagua Chapati Rosti
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/34692572/pexels-photo-34692572.jpeg" alt="Kachori" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Kachori</div>
+          <div class="food-price">Tsh 3,000</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Kachori" data-price="3000" />
+            Chagua Kachori
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/35152902/pexels-photo-35152902.jpeg" alt="Cupcake" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Cupcake</div>
+          <div class="food-price">Tsh 4,000</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Cupcake" data-price="4000" />
+            Chagua Cupcake
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/18238543/pexels-photo-18238543.jpeg" alt="Chai na Kahawa" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Chai na Kahawa</div>
+          <div class="food-price">Tsh 1,000</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Chai na Kahawa" data-price="1000" />
+            Chagua Chai na Kahawa
+          </label>
+        </div>
+      </div>
+
+      <!-- New items from 11 to 15 -->
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/2000498/pexels-photo-2000498.jpeg" alt="Mikate" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Mikate</div>
+          <div class="food-price">Tsh 2,000</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Mikate" data-price="2000" />
+            Chagua Mikate
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/6646082/pexels-photo-6646082.jpeg" alt="Tambi" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Tambi</div>
+          <div class="food-price">Tsh 3,000</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Tambi" data-price="3000" />
+            Chagua Tambi
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/12916880/pexels-photo-12916880.jpeg" alt="Wali Rosti" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Wali Rosti</div>
+          <div class="food-price">Tsh 3,500</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Wali Rosti" data-price="3500" />
+            Chagua Wali Rosti
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/9609848/pexels-photo-9609848.jpeg" alt="Mandii" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Mandii</div>
+          <div class="food-price">Tsh 5,000</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Mandii" data-price="5000" />
+            Chagua Mandii
+          </label>
+        </div>
+      </div>
+      <div class="food-item" role="listitem">
+        <img src="https://images.pexels.com/photos/5963873/pexels-photo-5963873.jpeg" alt="Wali Maharage" class="food-image" />
+        <div class="food-info">
+          <div class="food-name">Wali Maharage</div>
+          <div class="food-price">Tsh 2,500</div>
+          <label class="food-select">
+            <input type="checkbox" name="food" value="Wali Maharage" data-price="2500" />
+            Chagua Wali Maharage
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" aria-label="Tuma oda ya chakula">Tuma Oda</button>
+  </form>
+
+  <!-- Modal for order summary -->
+  <div class="modal" id="orderModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <div class="modal-content">
+      <h2 id="modalTitle">Thibitisha Oda Yako</h2>
+      <ul id="orderSummary" aria-live="polite" aria-relevant="additions"></ul>
+      <div class="modal-buttons">
+        <button class="btn-confirm" id="confirmOrderBtn">Thibitisha na Tuma WhatsApp</button>
+        <button class="btn-cancel" id="cancelOrderBtn">Rudia</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // WhatsApp number to send order to (change as needed)
+    const WHATSAPP_NUMBER = "255789352975";
+
+    const form = document.getElementById('foodOrderForm');
+    const modal = document.getElementById('orderModal');
+    const orderSummary = document.getElementById('orderSummary');
+    const confirmBtn = document.getElementById('confirmOrderBtn');
+    const cancelBtn = document.getElementById('cancelOrderBtn');
+
+    // Build order summary and message
+    function buildOrder() {
+      const selectedItems = [...form.elements['food']]
+        .filter(input => input.checked)
+        .map(input => ({
+          name: input.value,
+          price: Number(input.dataset.price)
+        }));
+
+      return selectedItems;
+    }
+
+    // Format price with thousands separator
+    function formatPrice(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // Show modal with order summary
+    function showModal(items) {
+      orderSummary.innerHTML = '';
+      if (items.length === 0) {
+        orderSummary.innerHTML = '<li>Hakuna chakula kilichochaguliwa.</li>';
+      } else {
+        items.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.name} - Tsh ${formatPrice(item.price)}`;
+          orderSummary.appendChild(li);
+        });
+        const total = items.reduce((acc, cur) => acc + cur.price, 0);
+        const totalLi = document.createElement('li');
+        totalLi.style.fontWeight = 'bold';
+        totalLi.style.marginTop = '12px';
+        totalLi.textContent = `Jumla: Tsh ${formatPrice(total)}`;
+        orderSummary.appendChild(totalLi);
+      }
+      modal.classList.add('active');
+      confirmBtn.focus();
+    }
+
+    // Build WhatsApp message text
+    function buildWhatsAppMessage(items) {
+      if (items.length === 0) return '';
+
+      let message = "Habari, napenda kuagiza chakula kama ifuatavyo:%0A";
+      items.forEach(item => {
+        message += `- ${item.name} (Tsh ${formatPrice(item.price)})%0A`;
+      });
+      const total = items.reduce((acc, cur) => acc + cur.price, 0);
+      message += `%0AJumla: Tsh ${formatPrice(total)}.%0AAsante sana!`;
+      return message;
+    }
+
+    // Event: form submit
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const items = buildOrder();
+      if (items.length === 0) {
+        alert('Tafadhali chagua angalau chakula kimoja kabla ya kutuma oda.');
+        return;
+      }
+      showModal(items);
+    });
+
+    // Event: cancel modal
+    cancelBtn.addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+
+    // Event: confirm order and open WhatsApp
+    confirmBtn.addEventListener('click', () => {
+      const items = buildOrder();
+      const message = buildWhatsAppMessage(items);
+      if (!message) return;
+
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+      window.open(url, '_blank', 'noopener');
+
+      modal.classList.remove('active');
+      form.reset();
+    });
+
+    // Accessibility: close modal on Escape key
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        modal.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>
