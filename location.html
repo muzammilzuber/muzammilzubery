@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="sw">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MuzzRest&food delivery - Share Location</title>
+  <style>
+    :root{ --accent:#ff6b35; --bg:#f7f7f8; --card:#ffffff; --muted:#666 }
+    body{ font-family: Inter, system-ui, Arial, sans-serif; background:var(--bg); margin:0; color:#111 }
+    .container{ max-width:900px; margin:28px auto; padding:20px }
+    header{ display:flex; align-items:center; gap:14px; margin-bottom:18px }
+    .logo{ display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit }
+    .logo svg{ width:56px; height:56px; }
+    .brand{ font-weight:700; font-size:18px }
+    .tag{ font-size:12px; color:var(--muted) }
+    .card{ background:var(--card); padding:18px; border-radius:10px; box-shadow:0 6px 18px rgba(20,20,30,0.06); margin-bottom:14px }
+    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center }
+    button{ background:var(--accent); color:#fff; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:600 }
+    button.secondary{ background:#eee; color:#111 }
+    .muted{ color:var(--muted) }
+    .controls{ display:flex; gap:8px; flex-wrap:wrap }
+    input[type="text"]{ padding:10px; border-radius:8px; border:1px solid #ddd; min-width:220px }
+    iframe.map{ width:100%; height:360px; border:0; border-radius:8px; margin-top:12px }
+    .links a{ display:inline-block; margin-right:10px; color:var(--accent); text-decoration:none; font-weight:600 }
+    footer{ margin-top:12px; font-size:13px; color:var(--muted) }
+    @media(max-width:520px){ header{ gap:8px } .brand{ font-size:16px } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="logo" href="#">
+        <!-- Simple fork+spoon SVG icon -->
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#ff8a50"/><stop offset="1" stop-color="#ff4b2b"/></linearGradient></defs>
+          <rect width="64" height="64" rx="12" fill="url(#g)"/>
+          <g transform="translate(8,8)" fill="#fff">
+            <!-- fork -->
+            <rect x="4" y="2" width="3" height="20" rx="1"/>
+            <rect x="2" y="2" width="7" height="2"/>
+            <rect x="2" y="6" width="7" height="2"/>
+            <!-- spoon -->
+            <ellipse cx="40" cy="8" rx="6" ry="8"/>
+            <rect x="36" y="16" width="8" height="16" rx="3"/>
+          </g>
+        </svg>
+        <div>
+          <div class="brand">MuzzRest&food delivery</div>
+          <div class="tag">Uwasilishaji wa chakula kwa haraka</div>
+        </div>
+      </a>
+    </header>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:700">Namba ya kuagiza / WhatsApp</div>
+          <div class="muted">+255 789 352 975</div>
+        </div>
+        <div class="links">
+          <!-- direct WhatsApp chat to business -->
+          <a href="https://wa.me/255789352975" target="_blank" rel="noopener">Chat kwenye WhatsApp (MuzzRest)</a>
+          <a href="tel:+255789352975">Piga simu</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Share location yako ili deliverer afuatilie</h3>
+      <p class="muted">Ruhusu kivinjari kupokea coordinates zako, kisha tumia vitufe vya chini.</p>
+
+      <div class="row" style="margin-top:12px">
+        <div class="controls">
+          <button id="btn-locate">Share my location (GEO)</button>
+          <button id="btn-open-maps" class="secondary">Open in Google Maps</button>
+          <button id="btn-whatsapp" class="secondary">Send location via WhatsApp</button>
+        </div>
+        <div style="margin-left:auto">
+          <input type="text" id="address" placeholder="Or enter address (fallback)"/>
+          <button id="use-address" class="secondary">Use address</button>
+        </div>
+      </div>
+
+      <div id="info" style="margin-top:12px; color:var(--muted)">
+        Coordinates: <span id="coords">not set</span>
+      </div>
+
+      <iframe id="mapFrame" class="map" src="https://www.google.com/maps?q=Dar%20es%20Salaam&z=12&output=embed" aria-label="Map preview"></iframe>
+
+      <small class="muted">Kumbuka: ili kupokea GPS, uwe kwenye HTTPS na ukurasa uwe umepewa ruhusa ya kutumia location kwenye browser.</small>
+    </div>
+
+    <footer class="card muted">
+      Ikiwa ungependa tracking ya realtime kwa deliverer (app kwa driver + dashboard), au kuunganisha Google Maps API kwa kuonyesha route ndani ya ukurasa, niambie nikuongezee. Je, ungependa pia fomu ya kuagiza na menu moja kwa moja kwenye ukurasa huu?
+    </footer>
+  </div>
+
+  <script>
+    // Configuration
+    const businessNumber = '255789352975'; // no plus sign for wa.me format
+    const btnLocate = document.getElementById('btn-locate');
+    const btnMaps = document.getElementById('btn-open-maps');
+    const btnWhats = document.getElementById('btn-whatsapp');
+    const coordsEl = document.getElementById('coords');
+    const mapFrame = document.getElementById('mapFrame');
+    const addrInput = document.getElementById('address');
+    const useAddrBtn = document.getElementById('use-address');
+
+    let currentLat = null;
+    let currentLng = null;
+
+    function updateMap(lat, lng) {
+      const q = encodeURIComponent(lat + ',' + lng);
+      // embedded maps without API key
+      mapFrame.src = `https://www.google.com/maps?q=${q}&z=16&output=embed`;
+      coordsEl.textContent = lat.toFixed(6) + ', ' + lng.toFixed(6);
+      currentLat = lat;
+      currentLng = lng;
+    }
+
+    function handleGeolocationError(err) {
+      alert('Haikuwezekana kupata location: ' + (err && err.message ? err.message : 'unknown'));
+    }
+
+    btnLocate.addEventListener('click', function() {
+      if (!navigator.geolocation) {
+        alert('Geolocation haipatikani kwenye browser hii.');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        updateMap(lat, lng);
+      }, handleGeolocationError, { enableHighAccuracy: true, timeout: 15000 });
+    });
+
+    // Open in Google Maps (works on mobile + desktop)
+    btnMaps.addEventListener('click', function() {
+      if (currentLat == null || currentLng == null) {
+        alert('Tafadhali panga kwanza location (Share my location) au tumia address.');
+        return;
+      }
+      const lat = currentLat;
+      const lng = currentLng;
+      // Prefer universal Google Maps directions link
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+      // google.navigation intent for Android native app (optional)
+      const intentUrl = `google.navigation:q=${lat},${lng}`;
+      // Try to open intent first (mobile); fall back to web link by opening mapsUrl
+      window.location.href = intentUrl;
+      // In case intent is not supported, also open maps web after a short delay
+      setTimeout(() => { window.open(mapsUrl, '_blank'); }, 500);
+    });
+
+    // Send to business via WhatsApp
+    btnWhats.addEventListener('click', function() {
+      if (currentLat == null || currentLng == null) {
+        alert('Tafadhali panga kwanza location (Share my location) au tumia address.');
+        return;
+      }
+      const lat = currentLat;
+      const lng = currentLng;
+      const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+      const text = encodeURIComponent(`Salamu, hii ni location yangu kwa ajili ya kuagiza: ${mapsLink}`);
+      // Use wa.me to send directly to business number
+      const waLink = `https://wa.me/${businessNumber}?text=${text}`;
+      window.open(waLink, '_blank');
+    });
+
+    // Use manual address fallback
+    useAddrBtn.addEventListener('click', function() {
+      const address = addrInput.value.trim();
+      if (!address) {
+        alert('Tafadhali ingiza address.');
+        return;
+      }
+      // Use encoded address in maps links and embed
+      const q = encodeURIComponent(address);
+      mapFrame.src = `https://www.google.com/maps?q=${q}&z=15&output=embed`;
+      coordsEl.textContent = address;
+      // Prepare links for open maps and WhatsApp based on address
+      currentLat = null;
+      currentLng = null;
+      // For open maps we will use destination=address format when clicked
+      btnMaps.onclick = function() {
+        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${q}`;
+        window.open(mapsUrl, '_blank');
+      };
+      btnWhats.onclick = function() {
+        const mapsLink = `https://www.google.com/maps?q=${q}`;
+        const text = encodeURIComponent(`Salamu, location yangu (address): ${mapsLink}`);
+        const waLink = `https://wa.me/${businessNumber}?text=${text}`;
+        window.open(waLink, '_blank');
+      };
+      alert('Address imewekwa. Tumia "Open in Google Maps" au "Send location via WhatsApp".');
+    });
+
+    // Safety note shown to user on script load (console)
+    console.log('MuzzRest location helper loaded. Business WhatsApp: ' + businessNumber);
+  </script>
+</body>
+</html>
